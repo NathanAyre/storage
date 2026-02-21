@@ -7,8 +7,8 @@ from textwrap import dedent
 from sage.repl.ipython_extension import SageCustomizations
 
 import asyncio
-import nest_asyncio
-nest_asyncio.apply()
+# import nest_asyncio
+# nest_asyncio.apply()
 
 @register_cell_magic
 def latex_editor(line,
