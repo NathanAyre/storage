@@ -435,7 +435,7 @@ def latex_editor(line,
     # asyncio.get_event_loop().run_until_complete(coro)
    
     # sage and pythontex.py have been ran at the same time. now proceed with 2nd latex compilation
-    get_ipy().run_cell(
+    await get_ipy().run_cell_async(
         dedent("""
         %%script bash
         {latex} {document}.tex > /dev/null 2>&1
@@ -446,7 +446,7 @@ def latex_editor(line,
     """.format(document = filename, latex = latex, latex2 = latex2))
     )
 
-    display(html.iframe(f"cell://{filename}.pdf"))
+    display(html.iframe(f"http://docs.google.com/gview?url=cell://{filename}.pdf&embedded=true"))
 
     all_files = os.listdir('.')
     try:
