@@ -193,6 +193,7 @@ def silly(t = input_box(starting_string, type=str, height=10)):
 
     display(html(f"""
     <script>
+function sendMessage() {
     var scriptTag = document.currentScript;
     var sagetex = scriptTag.closest("sagetex");
     if (!sagetex || !sagetex.id) return;
@@ -202,6 +203,9 @@ def silly(t = input_box(starting_string, type=str, height=10)):
         payload: "{data}",
         cell_id: sagetex.id
     }}, "*");
+}
+
+sendMessage();
     </script>
     """))
 
