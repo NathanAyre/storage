@@ -418,6 +418,7 @@ def latex_editor(line,
     latex = "latexmk -pdf -pdflua -shell-escape -interaction=batchmode" if ("%!tex lualatex" in cell) else "latexmk -pdf -shell-escape -interaction=batchmode"
     first_time = "-lualatex='lualatex -draftmode %O %S'" if ("%!tex lualatex" in cell) else "-pdflatex='pdflatex -draftmode %O %S'"
     latex2 = latex.replace("pdf", "dvi")
+    latex = "" # cus i dont want pdf anymore.
     # latex = "dvilualatex --shell-escape --interaction=batchmode" if ("%!tex lualatex" in cell) else "pdflatex -output-format=dvi -shell-escape -interaction=batchmode"
     # latex2 = ""
     get_ipy().run_cell(
