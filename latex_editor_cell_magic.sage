@@ -461,6 +461,8 @@ def latex_editor(line,
     """.format(document = filename, latex = latex, latex2 = latex2))
     )
 
+    display(html.iframe(f"cell://{filename}.pdf"))
+
     all_files = os.listdir('.')
     try:
         example_file = [f for f in all_files if f.startswith(f"{filename}1-")][0]
