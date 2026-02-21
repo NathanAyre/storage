@@ -1,364 +1,227 @@
-from textwrap import dedent
-import asyncio
-from IPython.core.interactiveshell import InteractiveShell
-
-from IPython.core.magic import register_cell_magic
+!rm -rf folder
 from pathlib import Path
-from IPython import get_ipython as get_ipy
-from urllib.parse import urlparse
-from sage.repl.ipython_extension import SageCustomizations
+
+startup = get_remote_file("https://raw.githubusercontent.com/NathanAyre/storage/refs/heads/main/latex_editor_startup.sage")
+latex_editor = get_remote_file("https://raw.githubusercontent.com/NathanAyre/storage/refs/heads/main/latex_editor_cell_magic.sage")
+
+await get_ipython().run_cell_async( Path(startup).read_text() )
+await get_ipython().run_cell_async( Path(latex_editor).read_text() )
+
+def ace_editor(mode):
+    get_ipython().run_cell_magic("javascript", "", r"""
+    document.querySelectorAll(".sagecell_interactControl > textarea").forEach(function(ta){
+   
+        if (ta.dataset.aceAttached === "1") {
+            return;
+        }
+        ta.dataset.aceAttached = "1";
+        ta.style.display = "none";
+
+        var pre = document.createElement("pre");
+        pre.style.width = "90vw";
+        pre.style.height = "20em";
+        pre.className = "my_ace_editor";
+        ta.parentElement.appendChild(pre);
+
+        var editor = ace.edit(pre);
+        editor.setTheme("ace/theme/monokai");
+        editor.session.setMode("ace/mode/latex");
+        editor.setValue(ta.value, -1);
+        editor.resize();
+       
+        editor.commands.addCommand({
+            name: "run",
+            bindKey: {win: "Ctrl-Space", mac: "Ctrl-Space"},
+            exec: function(ed) {
+                ta.value = ed.getValue();
+                ta.dispatchEvent(new Event("change", {bubbles:true}));
+            }
+        });
+
+        // IMPORTANT:
+        // DO NOT sync on change.
+        // Only sync when explicitly told to.
+
+        ta._ace_editor = editor;
+    });
+    """)
+   
+# end function
+
+get_ipython().run_cell_magic("javascript", "", r'''
+var preamble_script = document.createElement("script");
+
+if (!window.ace) {preamble_script.text = `
+    var script = document.createElement("script");
+    script.src = "https://cdn.jsdelivr.net/npm/ace-builds@1.43.6/src-min-noconflict/ace.min.js";
+    document.head.appendChild(script);
+
+    var l = document.createElement("link");
+    l.href = "https://cdn.jsdelivr.net/npm/ace-builds@1.43.6/css/ace.min.css";
+    l.rel = "stylesheet";
+    document.head.appendChild(l);
+   
+    var sty = document.createElement("style");
+    sty.type = "text/css";
+    sty.media = "screen";
+    sty.text = ".my_ace_editor {position:absolute; left:0; top:0; bottom:0; right:0;}"
+    document.head.appendChild(sty);
+`;
+
+document.body.appendChild(preamble_script);}
+''')
+
+from sage.repl.ipython_kernel.widgets import * # EvalTextarea
+from IPython.core.interactiveshell import InteractiveShell as IS
+from ipykernel.zmqshell import ZMQInteractiveShell as ZMQ
+from sage.repl.preparse import *
+iframe = html.iframe
+
+def prepare_sage_for_js(raw_sage_code):
+    # 1. Strip the literals
+    # stripped: "print(%(S1)s)"
+    # literals: {"S1": "'hello `world`'"}
+    stripped, literals, uhh = strip_string_literals(raw_sage_code)
+
+    processed_literals = {}
+
+    for key, value in literals.items():
+        # Escape backslashes first, then escape backticks
+        # This prevents JS from interpreting them as template placeholders
+        safe_val = value.replace('\\', '\\\\').replace('`', '\\`').replace('$', '\\$')
+        processed_literals[key] = safe_val
+
+    # 2. Re-insert the "safe" literals back into the stripped string
+    # We use Python's % operator to fill the %(L1)s placeholders
+    final_sage_code = stripped % processed_literals
+
+    return final_sage_code
 
 
-async def my_run_cell_async(cmd):
-    cmd = dedent(cmd)
-    shell = InteractiveShell()
-    o = SageCustomizations(shell)
-    o.init_environment()
-    o.init_inspector()
-    o.init_line_transforms()
-    o.register_interface_magics()
-    o.run_init()
-    
-    shell.user_ns = shell.user_ns | globals() | locals()
+# implicit_multiplication(True)
 
-    await asyncio.to_thread(shell.run_cell, cmd)
+# starting_string = '#print "hi"\nfrom IPython.core.interactiveshell import InteractiveShell\nIS = InteractiveShell\n\nfrom ipykernel.zmqshell import ZMQInteractiveShell as ZMQ\n\nget_ipython().run_cell_magic("writefile", "test.sage", preparse("16.sqrt()"))\nimplicit_multiplication(True)\na = 3\n\nInteractiveShell.ast_node_interactivity = "all"\nIS.ast_node_interactivity = "all"\nZMQ.ast_node_interactivity = "all"\nget_ipython().ast_node_interactivity = "all"\n\n\n# help(type(get_ipython()))\n\nfrom sage.repl.interpreter import *\nfrom ipykernel.zmqshell import ZMQInteractiveShell as ZMQ\n\n\n\nfrom sage.repl.preparse import *\nfor attr in "ipython_dir", "profile_dir":\n    # attr = attr.strip()\n    get_ipython().run_cell(preparse(r\'\'\'\n    attr\n    \'\'\'))\nshell = ZMQ()\n\n# shell.user_ns = get_ipython().user_ns\n\n\nsave_session("testing123")\n\nget_ipython(), shell\n\ns = preparse_file(# "load(\\"testing123\\")\\n" +\n                  "!ls --all\\n16"\n)\n\nshell.run_cell(s)\nprint()\n\npath = "/home/sc_serv/sage/src/sage_docbuild/__main__.py"\n\npretty = !pygmentize -f latex -O=full,style=emacs $path\n\nname = path.split("/")[-1].split(".")[0]\n/print name\n\n!ls --all $path\n\nget_ipython().run_cell_magic("writefile", name+".tex", pretty.n)\n__tmp__ = !pdflatex -interaction=batchmode $name\n!pdf2svg {name}.pdf {name}.svg\ndisplay(html.iframe(f"cell://{name}.svg"))\n\nfrom pygments.styles import STYLE_MAP\ncols = list(STYLE_MAP.keys())\n\n[str(x) for x in cols]\n\n# because len(cols) is 49, i can have a 7 by 7 matrix\ncols = matrix(SR, 7, cols)\n\nt = table(columns = cols)\n\nprint(t)\n\nshell.run_cell(r\'\'\'\nx=1\ny=3\nz=x+y\nprint x\na=5\nprint \'x\',x,\'y\',y\n%macro my_macro 1-4 6\'\'\');'
+# starting_string = "from IPython.core.interactiveshell import InteractiveShell\nInteractiveShell.ast_node_interactivity='all'\n1\n2\n3\n4\n5\nfactorial(9)\n\n# more here"
+starting_string = r'''
+%%latex_editor hi
+%!tex nopreamble
 
-async def my_run_cells_async(cmds):
-    await asyncio.gather(*(my_run_cell_async(cmd) for cmd in cmds))
-    
-# ---------------------
-
-async def latex_editor_async(cmd):
-    cmd = dedent(cmd)
-    shell = InteractiveShell()
-    o = SageCustomizations(shell)
-    o.init_environment()
-    o.init_inspector()
-    o.init_line_transforms()
-    o.register_interface_magics()
-    o.run_init()
-    
-    shell.user_ns = shell.user_ns | globals()
-    
-    # i am moving "load('latex_editor_cell_magic.sage')" to the main program, so it'll end up in globals()
-    # shell.run_cell( "load('latex_editor_cell_magic.sage')" )
-    await asyncio.to_thread(shell.run_cell, cmd)
-    
-async def latex_editors_async(cmds):
-    await asyncio.gather(*(latex_editor_async(cmd) for cmd in cmds))
-
-# begin startup
-
-# !rm -rf /home/sc_work/texmf
-!mkdir /home/sc_work/texmf
-if Path("/home/sc_work/texmf/tex/latex/sagetex").exists() == False:
-    !cp -a /home/sc_serv/sage/venv/share/texmf/. /home/sc_work/texmf
-
-urls = [
-    "https://github.com/josephwright/siunitx/releases/download/v3.4.14/siunitx.tds.zip",
-    "https://raw.githubusercontent.com/NathanAyre/storage/refs/heads/main/physics.sty",
-    "https://raw.githubusercontent.com/NathanAyre/storage/refs/heads/main/mhchem.sty",
-    "https://raw.githubusercontent.com/cgnieder/chemgreek/refs/heads/master/chemgreek.sty",
-    "https://raw.githubusercontent.com/gpoore/pythontex/refs/heads/master/pythontex/pythontex.dtx",
-    "https://github.com/fpantigny/piton/archive/refs/tags/v4.11.zip",
-    "https://github.com/gpoore/pythontex/archive/refs/tags/v0.18.zip",
-]
-
-def process_url(url):
-    from pathlib import Path
-    from urllib.parse import urlparse
-    from textwrap import dedent
-    from IPython import get_ipython as get_ipy
-    
-    if isinstance(url, str):
-        path = get_remote_file(url, verbose = False)
-        temp_name, ext = os.path.splitext(os.path.basename(path))
-        real_name = Path(urlparse(url).path).name
-        p = Path("/home/sc_work/texmf/tex/latex/" + real_name)
-        # print(p, p.exists())
-        if p.exists(): return;
-    else:
-        path = get_remote_file(url[0], verbose = False)
-        temp_name, ext = os.path.splitext(os.path.basename(path))
-        real_name = url[1]
-        p = Path("/home/sc_work/texmf/tex/latex/" + real_name)
-        if p.exists(): return;
-    # display(temp_name, real_name, ext)
-
-    get_ipy().run_cell(
-        dedent("""
-        %%%%script bash
-        mv %s /home/sc_work/texmf/tex/latex > /dev/null 2>&1        # move remote file into folder
-        cd /home/sc_work > /dev/null 2>&1 # set working directory to /home/sc_work. JUST MAKING ~/texmf DOES NOT WORK! YOU NEED /home/sc_work/texmf INSTEAD!!!
-
-        # ls --all texmf > /dev/null 2>&1     # list the contents of texmf before unzipping
-        cd texmf/tex/latex > /dev/null 2>&1
-        """%(path)
-        + (f"unzip {temp_name} -o > /dev/null 2>&1" if ext == ".zip" else f"mv {temp_name}{ext} {real_name} > /dev/null 2>&1")
-        + """
-        cd # > /dev/null 2>&1                 # revert working directory: /home/sc_work/texmf -> /home/sc_work
-        # ls --all texmf > /dev/null 2>&1   # list the contents of texmf after unzipping
-        """)
-    )
-
-# func_path = tmp_filename()
-# save(pickle_function(process_url), func_path)
-
-await my_run_cells_async(
-    dedent(f"""
-    process_url('{url}')
-    """) for url in urls
-)
-
-# back at home directory, I run any build files (manually D:)
-try:
-    build_commands = [
-        r'''
-        %%script bash
-        cd ~/texmf/tex/latex/{location} > /dev/null 2>&1
-        {command} {name}               > /dev/null 2>&1
-        '''.format(command = c, location = l, name = n) for [c, l, n] in [
-            # ["latex", "piton-4.11", "piton.ins"],
-            # [r"""printf "3\ny" | python3""", "pythontex-0.18/pythontex", "pythontex_install.py"] if Path("~/texmf/scripts/pythontex/pythontex.py").exists() == False else None
-        ]
-    ]
-except BaseException:
-    build_commands = []
-
-build_commands = [dedent(c) for c in build_commands]
-
-if build_commands != []:
-    await my_run_cells_async(build_commands)
-
-# end startup
-
-latex_cell_file = get_remote_file("https://raw.githubusercontent.com/NathanAyre/storage/refs/heads/main/latex_editor_cell_magic.sage")
-
-display(html("loading <code>latex_editor_cell_magic.sage</code>."))
-load(latex_cell_file, verbose = False)
-
-!pygmentize -f png -l python -O full,style=github-dark,font_size=16 -o latex_cell.png {latex_cell_file}
-
-display(
-    html.iframe("cell://latex_cell.png", 300, 500),
-)
-
-cmds = [
-    r'''
-%%latex_editor sagetex_test{}'''.format(i)
-+ r'''
-\usepackage{fancyvrb}
-
-\newcounter{mysageblock}
-
-\newenvironment{mysageblock}
-{
-  \stepcounter{mysageblock}
-  \edef\mysagefilename{mysageblock-\themysageblock.sage}
-
-  % Start writing verbatim to file
-  \VerbatimOut{\mysagefilename}
-}
-{
-  \endVerbatimOut
-
-  % Now execute it
-  \begin{sagesilent}
-  load("\mysagefilename")
-  \end{sagesilent}
-  
-  \par %
-
-  % Now typeset it
-  \myinput{python}{\mysagefilename}
-}
-
+\documentclass{article}
+\usepackage{sagetex}
 
 \begin{document}
-\begin{sageblock}
-total = 0
-for i in range(15):
-    total += i
-\end{sageblock}
+hi. something something...
 
-$\displaystyle{\sum_{k=1}^{14} k = \sage{total}}$
-
-Or, using this silly code:
-\begin{sageblock}
-k = var("k")
-total = sum(k, k, 1, 14)
-\end{sageblock}
-it is: \sage{total}.
-
-\vspace{1ex}
-
-additionally, i am not using Python\Tex{} anymore. \sageplot[width=0.3\textwidth]{
-    plot(
-        [x^2, 8*x-3, (8*x-3)*sin(x)],
-        (x, -10, 10),
-        frame = True,
-        gridlines = "minor"
-    )
-}
-
-\pagebreak
-
-\subsection*{Testing siunitx's rounding}
-\begin{sageblock}
-strings = [
-    r"\num[round-mode=places, round-precision=4]{278}",
-    r"\num[round-mode=figures, round-precision=5]{%s}"%(pi.n())
-];
-
-big_string = ""
-for s in strings:
-    s = [s, s]
-    s[0] = s[0].replace("{", r"\{")
-    s[0] = s[0].replace("}", r"\}")
-    
-    s[0] = r"\texttt{\string" + s[0] + r"}"
-    
-    big_string += "{0}: ${1}$ \\newline".format(*s)
-    
-print(big_string)
-\end{sageblock}
-
-\sagestr{big_string}
-
-\vspace{2ex}
-\num[round-mode=places, round-precision=1]{20.97}
-\num[parse-numbers=false]{$20.97$}
-
-\pagebreak
-
-\subsection*{table for count-rate experiment - using siunitx}
-
-\begin{sagesilent}
-code = r"""
-data = [
-    [5.0, 405, 75],
-    [10.0, 400, 207],
-    [15.0, 400, 389],
-    [20.0, 200, 275]
-];
-
-[row.insert(1, row[0] - 0.5) for row in data]
-[row.insert(2, 0.5) for row in data]
-
-# data = matrix(data).transpose()
-
-# data[-1] = [round(x) for x in data[-1]]
-# for i in [2]:
-#     data[i] = [x.n(digits = 2) for x in data[i]]
-
-# for i in [0,1]:
-#     data[i] = [round(314.8997, 3) for x in data[i]]
-
-# data = list(data.transpose())
-
-
-t = table(
-    rows = data,
-    header_row = [r"$r=x+d$ / cm", r"$x$ / cm", r"$d$ / cm", r"counts", r"time / s", r""],
-    frame = True
-); show(t)
-
-# NOW HERE'S THE SIUNITX ROUNDING APPLIED:
-
-latex_t = latex(t).splitlines()
-display(html("<h2>ORIGINAL</h2>"), latex_t)
-
-
-display(
-    html("<hr>"),
-    [row.split(r"\\") for row in latex_t],
-    html("<hr>")
-); latex_t = [row.split(r"\\") for row in latex_t]
-
-
-
-latex_t[1][0] = " & ".join(["{%s}"%header for header in latex_t[1][0].split("&") ])
-
-for row_index in range(1, len(latex_t) - 1):
-    latex_t[row_index][0] = [(x.replace("$", "") if row_index != 1 else x) for x in latex_t[row_index][0].split("&") ]
-
-for column_index in range(3):
-    for row_index in range(2, len(latex_t) - 1):
-        row = latex_t[row_index][0]
-        
-        row[column_index] = r"\num[round-mode=places, round-precision=1]{%s}"%(row[column_index])
-
-display(latex_t)
-
-# FINSIH LATER. THIS IS GOOD!
-for row_index in range(1, len(latex_t) - 1):
-    latex_t[row_index] = " & ".join(
-        flatten( latex_t[row_index] ) # flattened because each row isn't 1D: [ [col1, col2, ...], ['\\hline'] ]
-    )
-    
-print("\n\n")
-
-# i can replace latex_t[0][0] with my own column definitions, because i might wanna try out the siunitx `S[]` columns
-latex_t = latex_t[0][0] + "\n \\\\ \n".join(flatten(latex_t[1:])) # another flatten is required.
-
-print(latex_t)"""
-
-from textwrap import dedent
-code = dedent(code).strip()
-
-with open("count_rate.sage", "w") as file:
-    file.write(code)
-    
-load("count_rate.sage")
-\end{sagesilent}
-
-% now, printing the file contents
-\begin{sagesilent}
-with open("count_rate.sage", "r") as f:
-    lines = f.read()
-    display(lines)
-\end{sagesilent}
-
-\sagestr{latex_t}
-
-\myinput{python}{count_rate.sage}
-
-\pagebreak
-
-% \begin{mysageblock}
-% display(html("<h1>IT IS WORKING!!! YAYYYYYYY</h1>"))
-% \end{mysageblock}
+Also, did you know that $9!$ is equal to \sage{factorial(9)}? That's cool!!!! :D
+\[
+\int_0^{\frac94 \pi} \sin{x} \cos{x} \dd{x} = \sage{integrate(sin(x) * cos(x), x, 0, 9/4*pi)}
+\]
 
 \end{document}
-    ''' for i in [
-            "1_",
-            # "2_",
-            # "3_"
-        ]
-]
+'''
 
-for i in range(10):
-    test_cmd = r"""
-    %%latex_editor sagetex_async%s
-    \documentclass{article}
-    \begin{document}
+@interact
+def silly(t = input_box(starting_string, type=str, height=10)):
+    !rm -rf folder
+    mode = "latex" if "%%latex_editor" in str(t) else "python"
+    ace_editor(mode)
 
-    \section*{This is \texttt{sagetex\_async%s.tex}}
+    Path("file.sage").write_text(t)
+   
+    # with open("file.sage.py", "w") as f:
+    #     preparse_file_named_to_stream("file.sage", f)
+   
+   
+    # hide = ["fullScreen", "evalButton", "done"]
+    hide = [
+        # "editor",
+        "fullScreen", "language",
+        "evalButton", "permalink",
+        "output", "done", "sessionFiles"
+    ];
+   
+    js_code = 'sagecell.makeSagecell({\ninputLocation: \'pre.my_sage\',\nlanguages: sagecell.allLanguages,\nautoeval: true,\nhide: '+str(hide)+',\ncode: `' + prepare_sage_for_js(t) + '`,\ninteracts: JSON.parse(decodeURIComponent(\'%5B%5D\')),\n\n\ndefaultLanguage: \'sage\',\n\n//Focus the editor\n});\n'
+   
+    # save_session("hi")
+    # session_code = load("hi.sobj")
+   
+    # exec(preparse_file(t, get_ipython().user_ns | session_code))
+   
+    # below is evidence that you can give the other cells your context, WITHOUT "linking" them - they still run asyncronously!!! YIPPEE!!!
+    # t = "get_ipython().user_ns = get_ipython().user_ns | " + str(session_code) + "\n" + str(t) + "\n\nprint(hide)"
+   
+    # pyg_stdout = !pygmentize -f html -O full,style=monokai,linenos -o file.html file.sage
+    # display(html(
+#         r'''
+# <iframe style="height: 20em; width:90vw; overflow: auto;" src="cell://file.html">
+# </iframe>
+# '''
+    # ));
+   
+    display(html("<a href='cell://backup.zip'>BACKUP.ZIP</a>"))
 
-    \sage{factorial(9)}
+    IS.ast_node_interactivity = "all"
+    get_ipython().run_cell("%autocall 1")
+   
+    get_ipython().run_cell(Path("file.sage").read_text())
+   
+    def display_cells(num_of_cells):
+        for i in range(num_of_cells):
+            display(
+                html(f"<pre class='my_sage'></pre>"),
+                html.iframe("cell://file.sage.py"),
+            )
+   
+    # display_cells(1)
+   
+    # CANCELLING THE STUFF BELOW WITH A RETURN
 
-    \begin{sagesilent}
-    x = var("x")
-    f(x) = %s*sin(x)
-    \end{sagesilent}
+    %mkdir folder
+   
+    files = !find . -type d -name "folder" -prune -o -type f -print
+    for f in files:
+        !cp -r {f} ./folder
+   
+    import shutil
+    import base64
+   
+    shutil.make_archive("backup", "zip", "./folder")
 
-    \sageplot{
-        plot([f(x), x^(%s)], x, -1, 1, legend_label = "automatic")
-    }
-    
-    \end{document}
-    """.replace("%s", str(i));
-    
-    # cmds.append(test_cmd)
-    
-# await latex_editors_async(cmds)
+    with open("backup.zip", "rb") as f:
+        data = base64.b64encode(f.read()).decode()
+       
+    display(html(f"""
+    <script>
+    window.parent.postMessage({{
+        type: "sage_backup",
+        payload: "{data}"
+    }}, "*");
+    </script>
+    """))
+
+    print("FILE_DUMP_START")
+    display(html(f"<div style='font-family: consolas; max-width: 50vw; max-height: 15em;overflow:clip; text-wrap:anywhere; word-wrap:anywhere'>{data}</div>"))
+    print("FILE_DUMP_END")
+
+    import time
+    get_ipython().run_cell_magic("javascript", "", """
+        document.images.forEach(img => {
+            var baseUrl = img.src.split('?')[0];
+            img.src = baseUrl + '?t=' + %s;
+        });
+
+        document.querySelectorAll("iframe").forEach(iframe => {
+            var baseUrl = iframe.src.split('?')[0];
+            iframe.src = baseUrl + '?t=' + %s;
+        });
+    """%(time.time(), time.time()));
+    # get_ipython().run_cell_magic("javascript", "", f"""
+    # //window.parent.postMessage
+    # console.log({{
+    #     type: "sage_file",
+    #     name: "file.sage",
+    #     content: "{data}"
+    # }}, "*");
+    # """)
+   
+    # get_ipython().run_cell_magic("javascript", "", js_code)
