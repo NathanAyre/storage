@@ -445,8 +445,8 @@ def latex_editor(line,
         dvisvgm --page=1- --output="%f%p-%P" --font-format=woff --exact-bbox {document}.dvi > /dev/null 2>&1
     """.format(document = filename, latex = latex, latex2 = latex2))
     )
-
-    display(html.iframe(f"https://drive.google.com/viewerng/viewer?embedded=true&?url=cell://{filename}.pdf#toolbar=0&scrollbar=0"))
+    import time
+    display(html.iframe(f"cell://{filename}.pdf?{time.time()}"))
 
     all_files = os.listdir('.')
     try:
@@ -456,10 +456,10 @@ def latex_editor(line,
         images = ""
         for i in range(1, total_pages + 1):
             current_img = f"{filename}{i}-{total_pages}"
-            images += f"<iframe src='cell://{current_img}.svg' style='min-width:500px; display:block; margin:auto; margin-top:5em'></iframe>"
+            images += f"<img src='cell://{current_img}.svg?{time.time()}' style='min-width:500px; display:block; margin:auto; margin-top:5em'>"
 
             # old PNG version:
-            # display( html(f"<iframe src='cell://{filename}1.png' style='min-width:500px; max-width:50%; display:block; margin:auto'></iframe>") )
+            # display( html(f"<img src='cell://{filename}1.png' style='min-width:500px; max-width:50%; display:block; margin:auto'>") )
         display( html(f"<div style='height:27.5em; width:80%; overflow:overlay;'> {images} </div>") )
     except BaseException:
         display( html(f"<h2>no SVG output for {filename}.tex</h2>") )
