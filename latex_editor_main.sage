@@ -191,8 +191,9 @@ def silly(t = input_box(starting_string, type=str, height=10)):
     with open("backup.zip", "rb") as f:
         data = base64.b64encode(f.read()).decode()
 
-    get_ipython().run_cell_magic("javascript", "", f"""
-function sendMessage() {{
+    display(html(f"""
+<script>
+(function() {{
     var scriptTag = document.currentScript;
     var sagetex = scriptTag.closest("sagetex");
     if (!sagetex || !sagetex.id) return;
@@ -202,10 +203,11 @@ function sendMessage() {{
         payload: "{data}",
         cell_id: sagetex.id
     }}, "*");
-}}
 
-sendMessage();
-    """)
+    console.log("hi");
+}})();
+</script>
+"""))
 
     print("FILE_DUMP_START")
     display(html(f"<div style='font-family: consolas; max-width: 50vw; max-height: 15em;overflow:clip; text-wrap:anywhere; word-wrap:anywhere'>{data}</div>"))
