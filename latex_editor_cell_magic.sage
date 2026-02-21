@@ -435,7 +435,7 @@ def latex_editor(line,
     # asyncio.get_event_loop().run_until_complete(coro)
    
     # sage and pythontex.py have been ran at the same time. now proceed with 2nd latex compilation
-    await get_ipy().run_cell_async(
+    get_ipy().run_cell(
         dedent("""
         %%script bash
         {latex} {document}.tex > /dev/null 2>&1
