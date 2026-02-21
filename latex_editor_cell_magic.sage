@@ -10,22 +10,6 @@ import asyncio
 import nest_asyncio
 nest_asyncio.apply()
 
-async def my_run_cell_async(cmd):
-    cmd = dedent(cmd)
-    shell = InteractiveShell()
-    o = SageCustomizations(shell)
-    o.init_environment()
-    o.init_inspector()
-    o.init_line_transforms()
-    o.register_interface_magics()
-    o.run_init()
-
-    await asyncio.to_thread(shell.run_cell, cmd)
-
-async def my_run_cells_async(cmds):
-    await asyncio.gather(*(my_run_cell_async(cmd) for cmd in cmds))
-
-
 @register_cell_magic
 def latex_editor(line,
                  cell = r"""
