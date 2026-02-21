@@ -102,7 +102,8 @@ def prepare_sage_for_js(raw_sage_code):
 
 # starting_string = '#print "hi"\nfrom IPython.core.interactiveshell import InteractiveShell\nIS = InteractiveShell\n\nfrom ipykernel.zmqshell import ZMQInteractiveShell as ZMQ\n\nget_ipython().run_cell_magic("writefile", "test.sage", preparse("16.sqrt()"))\nimplicit_multiplication(True)\na = 3\n\nInteractiveShell.ast_node_interactivity = "all"\nIS.ast_node_interactivity = "all"\nZMQ.ast_node_interactivity = "all"\nget_ipython().ast_node_interactivity = "all"\n\n\n# help(type(get_ipython()))\n\nfrom sage.repl.interpreter import *\nfrom ipykernel.zmqshell import ZMQInteractiveShell as ZMQ\n\n\n\nfrom sage.repl.preparse import *\nfor attr in "ipython_dir", "profile_dir":\n    # attr = attr.strip()\n    get_ipython().run_cell(preparse(r\'\'\'\n    attr\n    \'\'\'))\nshell = ZMQ()\n\n# shell.user_ns = get_ipython().user_ns\n\n\nsave_session("testing123")\n\nget_ipython(), shell\n\ns = preparse_file(# "load(\\"testing123\\")\\n" +\n                  "!ls --all\\n16"\n)\n\nshell.run_cell(s)\nprint()\n\npath = "/home/sc_serv/sage/src/sage_docbuild/__main__.py"\n\npretty = !pygmentize -f latex -O=full,style=emacs $path\n\nname = path.split("/")[-1].split(".")[0]\n/print name\n\n!ls --all $path\n\nget_ipython().run_cell_magic("writefile", name+".tex", pretty.n)\n__tmp__ = !pdflatex -interaction=batchmode $name\n!pdf2svg {name}.pdf {name}.svg\ndisplay(html.iframe(f"cell://{name}.svg"))\n\nfrom pygments.styles import STYLE_MAP\ncols = list(STYLE_MAP.keys())\n\n[str(x) for x in cols]\n\n# because len(cols) is 49, i can have a 7 by 7 matrix\ncols = matrix(SR, 7, cols)\n\nt = table(columns = cols)\n\nprint(t)\n\nshell.run_cell(r\'\'\'\nx=1\ny=3\nz=x+y\nprint x\na=5\nprint \'x\',x,\'y\',y\n%macro my_macro 1-4 6\'\'\');'
 # starting_string = "from IPython.core.interactiveshell import InteractiveShell\nInteractiveShell.ast_node_interactivity='all'\n1\n2\n3\n4\n5\nfactorial(9)\n\n# more here"
-starting_string = r'''
+# starting_string =
+r'''
 %%latex_editor hi
 %!tex nopreamble
 
@@ -189,12 +190,15 @@ def silly(t = input_box(starting_string, type=str, height=10)):
 
     with open("backup.zip", "rb") as f:
         data = base64.b64encode(f.read()).decode()
-       
+
+
+    cell_id = t.strip().striplines()[0].replace("%%latex_editor", "").strip()
     display(html(f"""
     <script>
     window.parent.postMessage({{
         type: "sage_backup",
-        payload: "{data}"
+        payload: "{data}",
+        cell_id: "{cell_id}"
     }}, "*");
     </script>
     """))
