@@ -432,9 +432,12 @@ def latex_editor(line,
 
     # now go back to the home directory and run `latex` as defined in the variable below
     latex = "latexmk -pdf -pdflua -shell-escape -interaction=batchmode" if ("%!tex lualatex" in cell) else "latexmk -pdf -shell-escape -interaction=batchmode"
-    # latex = "lualatex --shell-escape --interaction=batchmode" if ("%!tex lualatex" in cell) else "pdflatex -shell-escape -interaction=batchmode"
+    first_time = "-lualatex='lualatex -draftmode %O %S'" if ("%!tex lualatex" in cell) else "-pdflatex='pdflatex -draftmode %O %S'"
+    latex2 = latex.replace("pdf", "dvi")
+    # latex = "dvilualatex --shell-escape --interaction=batchmode" if ("%!tex lualatex" in cell) else "pdflatex -output-format=dvi -shell-escape -interaction=batchmode"
+    # latex2 = ""
     get_ipy().run_cell(
-        "!{latex} {document}.tex > /dev/null 2>&1".format(document = filename, latex = latex)
+        "!{latex} {document}.tex > /dev/null 2>&1".format(document = filename, latex = latex + " " + first_time)
     );
    
     coro = my_run_cells_async(
@@ -451,10 +454,11 @@ def latex_editor(line,
         dedent("""
         %%script bash
         {latex} {document}.tex > /dev/null 2>&1
+        {latex2} {document}.tex > /dev/null 2>&1
 
         # dvipng -D 3000 -T tight {document}.dvi > /dev/null 2>&1
         dvisvgm --page=1- --output="%f%p-%P" --font-format=woff --exact-bbox {document}.dvi > /dev/null 2>&1
-    """.format(document = filename, latex = latex))
+    """.format(document = filename, latex = latex, latex2 = latex2))
     )
 
     all_files = os.listdir('.')
