@@ -209,9 +209,8 @@ def silly(t = input_box(starting_string, type=str, height=10)):
 </script>
 """))
 
-    print("FILE_DUMP_START")
-    display(html(f"<div style='font-family: consolas; max-width: 50vw; max-height: 15em;overflow:clip; text-wrap:anywhere; word-wrap:anywhere'>{data}</div>"))
-    print("FILE_DUMP_END")
+    display(html(f"<div class="message" style="display:none; visibility:hidden">{data}</div>))
+# style='font-family: consolas; max-width: 50vw; max-height: 15em;overflow:clip; text-wrap:anywhere; word-wrap:anywhere'>{data}</div>"))
 
     return;
 
