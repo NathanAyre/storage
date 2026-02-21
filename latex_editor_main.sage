@@ -191,14 +191,16 @@ def silly(t = input_box(starting_string, type=str, height=10)):
     with open("backup.zip", "rb") as f:
         data = base64.b64encode(f.read()).decode()
 
-
-    cell_id = t.strip().striplines()[0].replace("%%latex_editor", "").strip()
     display(html(f"""
     <script>
+    var scriptTag = document.currentScript;
+    var sagetex = scriptTag.closest("sagetex");
+    if (!sagetex || !sagetex.id) return;
+
     window.parent.postMessage({{
         type: "sage_backup",
         payload: "{data}",
-        cell_id: "{cell_id}"
+        cell_id: sagetex.id
     }}, "*");
     </script>
     """))
