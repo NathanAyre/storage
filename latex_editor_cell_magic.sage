@@ -446,7 +446,7 @@ def latex_editor(line,
     """.format(document = filename, latex = latex, latex2 = latex2))
     )
     import time
-    display(html.iframe(f"cell://{filename}.pdf?{time.time()}"))
+    # display(html.iframe(f"cell://{filename}.pdf?{time.time()}"))
 
     all_files = os.listdir('.')
     try:
