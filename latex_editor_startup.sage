@@ -131,8 +131,3 @@ if build_commands != []:
     await my_run_cells_async(build_commands)
 
 # end startup
-
-latex_cell_file = get_remote_file("https://raw.githubusercontent.com/NathanAyre/storage/refs/heads/main/latex_editor_cell_magic.sage")
-
-display(html("loading <code>latex_editor_cell_magic.sage</code>."))
-load(latex_cell_file, verbose = False)
