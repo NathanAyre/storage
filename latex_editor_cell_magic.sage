@@ -431,8 +431,8 @@ def latex_editor(line,
         )
 
     # now go back to the home directory and run `latex` as defined in the variable below
-    # latex = "latexmk -dvilua -shell-escape -interaction=batchmode" if ("%!tex lualatex" in cell) else "latexmk -dvi -shell-escape -interaction=batchmode"
-    latex = "lualatex --output-format=dvi --shell-escape --interaction=batchmode" if ("%!tex lualatex" in cell) else "pdflatex -output-format=dvi -shell-escape -interaction=batchmode"
+    latex = "latexmk -dvilua -lua -shell-escape -interaction=batchmode" if ("%!tex lualatex" in cell) else "latexmk -dvi -pdf -shell-escape -interaction=batchmode"
+    # latex = "lualatex --output-format=dvi --shell-escape --interaction=batchmode" if ("%!tex lualatex" in cell) else "pdflatex -output-format=dvi -shell-escape -interaction=batchmode"
     get_ipy().run_cell(
         "!{latex} {document}.tex > /dev/null 2>&1".format(document = filename, latex = latex)
     );
