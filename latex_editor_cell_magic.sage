@@ -27,6 +27,7 @@ def latex_editor(line,
                 ):
     display(html("<h3>STARTING!</h3>"))
     __tmp__ = !rm *.svg
+    __tmp__ = !rm *.pygtex
     filename = line
     preamble = r"""
   \documentclass{article}
@@ -445,7 +446,7 @@ def latex_editor(line,
     """.format(document = filename, latex = latex, latex2 = latex2))
     )
 
-    # import time
+    import time
     # display(html.iframe(f"cell://{filename}.pdf?{time.time()}"))
 
     all_files = os.listdir('.')
