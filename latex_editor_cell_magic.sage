@@ -423,7 +423,10 @@ def latex_editor(line,
     # latex = "dvilualatex --shell-escape --interaction=batchmode" if ("%!tex lualatex" in cell) else "pdflatex -output-format=dvi -shell-escape -interaction=batchmode"
     # latex2 = ""
     get_ipy().run_cell(
-        "!{latex} {document}.tex > /dev/null 2>&1".format(document = filename, latex = latex + " " + first_time)
+        """
+!{latex} {document}.tex > /dev/null 2>&1
+!{latex2} {document}.tex > /dev/null 2>&1
+""".format(document = filename, latex = latex + " " + first_time, latex2 = latex2 + " " + first_time)
     );
    
     try:
@@ -444,7 +447,10 @@ def latex_editor(line,
         dvisvgm --page=1- --output="%f%p-%P" --font-format=woff --exact-bbox {document}.dvi > /dev/null 2>&1
     """.format(document = filename, latex = latex, latex2 = latex2))
     )
-    import time
+
+    __tmp__ = !rm *.pygtex
+
+    # import time
     # display(html.iframe(f"cell://{filename}.pdf?{time.time()}"))
 
     all_files = os.listdir('.')
