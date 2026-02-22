@@ -415,6 +415,8 @@ def latex_editor(line,
             preamble + "\n" + cell#.replace(r"\begin{document}", pitonReplace)
         )
 
+    __tmp__ = !rm *.pygtex
+
     # now go back to the home directory and run `latex` as defined in the variable below
     latex = "latexmk -pdf -pdflua -shell-escape -interaction=batchmode" if ("%!tex lualatex" in cell) else "latexmk -pdf -shell-escape -interaction=batchmode"
     first_time = "-lualatex='lualatex -draftmode %O %S'" if ("%!tex lualatex" in cell) else "-pdflatex='pdflatex -draftmode %O %S'"
@@ -423,10 +425,7 @@ def latex_editor(line,
     # latex = "dvilualatex --shell-escape --interaction=batchmode" if ("%!tex lualatex" in cell) else "pdflatex -output-format=dvi -shell-escape -interaction=batchmode"
     # latex2 = ""
     get_ipy().run_cell(
-        """
-!{latex} {document}.tex > /dev/null 2>&1
-!{latex2} {document}.tex > /dev/null 2>&1
-""".format(document = filename, latex = latex + " " + first_time, latex2 = latex2 + " " + first_time)
+        "!{latex2} {document}.tex > /dev/null 2>&1".format(document = filename, latex2 = latex2)
     );
    
     try:
@@ -447,8 +446,6 @@ def latex_editor(line,
         dvisvgm --page=1- --output="%f%p-%P" --font-format=woff --exact-bbox {document}.dvi > /dev/null 2>&1
     """.format(document = filename, latex = latex, latex2 = latex2))
     )
-
-    __tmp__ = !rm *.pygtex
 
     # import time
     # display(html.iframe(f"cell://{filename}.pdf?{time.time()}"))
