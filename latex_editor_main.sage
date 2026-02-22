@@ -7,70 +7,6 @@ latex_editor = get_remote_file("https://raw.githubusercontent.com/NathanAyre/sto
 await get_ipython().run_cell_async( Path(startup).read_text() )
 await get_ipython().run_cell_async( Path(latex_editor).read_text() )
 
-def ace_editor(mode):
-    get_ipython().run_cell_magic("javascript", "", r"""
-    document.querySelectorAll(".sagecell_interactControl > textarea").forEach(function(ta){
-   
-        if (ta.dataset.aceAttached === "1") {
-            return;
-        }
-        ta.dataset.aceAttached = "1";
-        ta.style.display = "none";
-
-        var pre = document.createElement("pre");
-        pre.style.width = "90vw";
-        pre.style.height = "20em";
-        pre.className = "my_ace_editor";
-        ta.parentElement.appendChild(pre);
-
-        var editor = ace.edit(pre);
-        editor.setTheme("ace/theme/monokai");
-        editor.session.setMode("ace/mode/latex");
-        editor.setValue(ta.value, -1);
-        editor.resize();
-       
-        editor.commands.addCommand({
-            name: "run",
-            bindKey: {win: "Ctrl-Space", mac: "Ctrl-Space"},
-            exec: function(ed) {
-                ta.value = ed.getValue();
-                ta.dispatchEvent(new Event("change", {bubbles:true}));
-            }
-        });
-
-        // IMPORTANT:
-        // DO NOT sync on change.
-        // Only sync when explicitly told to.
-
-        ta._ace_editor = editor;
-    });
-    """)
-   
-# end function
-
-get_ipython().run_cell_magic("javascript", "", r'''
-var preamble_script = document.createElement("script");
-
-if (!window.ace) {preamble_script.text = `
-    var script = document.createElement("script");
-    script.src = "https://cdn.jsdelivr.net/npm/ace-builds@1.43.6/src-min-noconflict/ace.min.js";
-    document.head.appendChild(script);
-
-    var l = document.createElement("link");
-    l.href = "https://cdn.jsdelivr.net/npm/ace-builds@1.43.6/css/ace.min.css";
-    l.rel = "stylesheet";
-    document.head.appendChild(l);
-   
-    var sty = document.createElement("style");
-    sty.type = "text/css";
-    sty.media = "screen";
-    sty.text = ".my_ace_editor {position:absolute; left:0; top:0; bottom:0; right:0;}"
-    document.head.appendChild(sty);
-`;
-
-document.body.appendChild(preamble_script);}
-''')
-
 from sage.repl.ipython_kernel.widgets import * # EvalTextarea
 from IPython.core.interactiveshell import InteractiveShell as IS
 from ipykernel.zmqshell import ZMQInteractiveShell as ZMQ
@@ -124,8 +60,6 @@ Also, did you know that $9!$ is equal to \sage{factorial(9)}? That's cool!!!! :D
 @interact
 def silly(t = input_box(starting_string, type=str, height=10)):
     !rm -rf folder
-    mode = "latex" if "%%latex_editor" in str(t) else "python"
-    ace_editor(mode)
 
     Path("file.sage").write_text(t)
    
