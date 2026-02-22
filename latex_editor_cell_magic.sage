@@ -27,7 +27,6 @@ def latex_editor(line,
                 ):
     display(html("<h3>STARTING!</h3>"))
     __tmp__ = !rm *.svg
-    __tmp__ = !rm *.pygtex
     filename = line
     preamble = r"""
   \documentclass{article}
