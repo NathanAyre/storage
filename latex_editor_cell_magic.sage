@@ -426,14 +426,11 @@ def latex_editor(line,
         "!{latex} {document}.tex > /dev/null 2>&1".format(document = filename, latex = latex + " " + first_time)
     );
    
-    for cmd in (
-        cmd.format(document=filename) for cmd in [
-            # "!python3 /home/sc_work/texmf/scripts/pythontex/pythontex3.py '{document}'",
-            "try: load('{document}.sagetex.sage', verbose=False)\nexcept: display(html('<h2>no sage file found (finding {document}.sagetex.sage)</h2>'))"
-        ]
-    ):
-        get_ipython().run_cell(cmd)
-   
+    try:
+        load('{document}.sagetex.sage', verbose=False)
+    except:
+        display(html('<h2>no sage file found (finding {document}.sagetex.sage)</h2>'))
+
     # asyncio.get_event_loop().run_until_complete(coro)
    
     # sage and pythontex.py have been ran at the same time. now proceed with 2nd latex compilation
