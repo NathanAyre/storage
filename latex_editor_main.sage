@@ -1,8 +1,8 @@
 !rm -rf folder
 from pathlib import Path
 
-startup = get_remote_file("https://raw.githubusercontent.com/NathanAyre/storage/refs/heads/main/latex_editor_startup.sage")
-latex_editor = get_remote_file("https://raw.githubusercontent.com/NathanAyre/storage/refs/heads/main/latex_editor_cell_magic.sage")
+startup = get_remote_file("https://raw.githubusercontent.com/NathanAyre/storage/refs/heads/main/latex_editor_startup.sage", verbose=False)
+latex_editor = get_remote_file("https://raw.githubusercontent.com/NathanAyre/storage/refs/heads/main/latex_editor_cell_magic.sage", verbose=False)
 
 await get_ipython().run_cell_async( Path(startup).read_text() )
 await get_ipython().run_cell_async( Path(latex_editor).read_text() )
