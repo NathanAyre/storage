@@ -457,7 +457,7 @@ def latex_editor(line,
         images = ""
         for i in range(1, total_pages + 1):
             current_img = f"{filename}{i}-{total_pages}"
-            images += f"<img src='cell://{current_img}.svg?{time.time()}' style='min-width:500px; display:block; margin:auto; margin-top:5em'>"
+            images += f"<img src='cell://{current_img}.svg?{time.time()}' style='min-width:500px; margin-top:5em'>"
 
             # old PNG version:
             # display( html(f"<img src='cell://{filename}1.png' style='min-width:500px; max-width:65%;'>") )
