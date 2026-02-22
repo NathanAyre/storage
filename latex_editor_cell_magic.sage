@@ -460,7 +460,7 @@ def latex_editor(line,
             images += f"<img src='cell://{current_img}.svg?{time.time()}' style='min-width:500px; display:block; margin:auto; margin-top:5em'>"
 
             # old PNG version:
-            # display( html(f"<img src='cell://{filename}1.png' style='min-width:500px; max-width:50%; display:block; margin:auto'>") )
+            # display( html(f"<img src='cell://{filename}1.png' style='min-width:500px; max-width:65%;'>") )
         display( html(f"<div style='height:27.5em; width:80%; overflow:overlay;'> {images} </div>") )
     except BaseException:
         display( html(f"<h2>no SVG output for {filename}.tex</h2>") )
