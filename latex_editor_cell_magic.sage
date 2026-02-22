@@ -27,6 +27,7 @@ def latex_editor(line,
                 ):
     display(html("<h3>STARTING!</h3>"))
     __tmp__ = !rm *.svg
+    __tmp__ = !rm *.pygtex
     filename = line
     preamble = r"""
   \documentclass{article}
@@ -414,8 +415,6 @@ def latex_editor(line,
         f.write(
             preamble + "\n" + cell#.replace(r"\begin{document}", pitonReplace)
         )
-
-    __tmp__ = !rm *.pygtex
 
     # now go back to the home directory and run `latex` as defined in the variable below
     latex = "latexmk -pdf -pdflua -shell-escape -interaction=batchmode" if ("%!tex lualatex" in cell) else "latexmk -pdf -shell-escape -interaction=batchmode"
