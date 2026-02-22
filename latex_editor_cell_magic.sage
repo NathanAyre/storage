@@ -26,6 +26,7 @@ def latex_editor(line,
                     \end{document}"""
                 ):
     display(html("<h3>STARTING!</h3>"))
+    __tmp__ = !rm *.svg
     filename = line
     preamble = r"""
   \documentclass{article}
