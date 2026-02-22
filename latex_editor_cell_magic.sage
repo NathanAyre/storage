@@ -427,9 +427,9 @@ def latex_editor(line,
     );
    
     try:
-        load('{document}.sagetex.sage', verbose=False)
+        load(f'{filename}.sagetex.sage', verbose=False)
     except:
-        display(html('<h2>no sage file found (finding {document}.sagetex.sage)</h2>'))
+        display(html(f'<h2>no sage file found (finding {filename}.sagetex.sage)</h2>'))
 
     # asyncio.get_event_loop().run_until_complete(coro)
    
