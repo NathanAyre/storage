@@ -212,6 +212,8 @@ def silly(t = input_box(starting_string, type=str, height=10)):
     display(html(f'<div class="message" style="display:none; visibility:hidden">{data}</div>'))
 # style='font-family: consolas; max-width: 50vw; max-height: 15em;overflow:clip; text-wrap:anywhere; word-wrap:anywhere'>{data}</div>"))
 
+    !rm backup.zip
+
     return;
 
     import time
