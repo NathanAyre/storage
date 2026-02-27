@@ -10,7 +10,7 @@ fn = get_remote_file("https://github.com/josephwright/luatex85/archive/refs/tags
 __tmp__ = !unzip -o {fn} -d ~/texmf/tex/latex
 __tmp__ = get_ipython().run_cell_magic("script", "bash", """
 cd ~/texmf/tex/latex/luatex85-1.0
-latex luatex85.ins > /dev/null2&1
+latex luatex85.ins > /dev/null 2>&1
 """);
 
 latex.add_to_preamble( get_remote_file("https://raw.githubusercontent.com/NathanAyre/storage/refs/heads/main/preamble.tex").read_text() )
