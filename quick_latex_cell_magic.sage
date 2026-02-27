@@ -23,9 +23,12 @@ def quick_latex(line, cell):
     line = line.split()
     f = line[0]
     try:
-        full = (line[1].lower() != "standalone")
+        full = True if line[1].lower() != "standalone" \
+                    else False;
+        doc_class = full[1]
     except BaseException:
-        full = "standalone"
+        full = False
+        # no need to set doc_class
     try:
         line_locals = dict(line[2])
     except BaseException:
@@ -34,7 +37,7 @@ def quick_latex(line, cell):
     if full:
         png(
             rf"""
-\documentclass{{{line[1]}}}
+\documentclass{{{doc_class}}}
             """ + latex.extra_preamble()
                 + "\n"
                 + s,
