@@ -14,7 +14,7 @@ latex luatex85.ins > /dev/null 2>&1
 """);
 
 latex.add_to_preamble( get_remote_file("https://raw.githubusercontent.com/NathanAyre/storage/refs/heads/main/preamble.tex").read_text() )
-
+latex.add_to_preamble(r"\pagenumbering{gobble}")
 @register_cell_magic
 def quick_latex(line, cell):
     """
