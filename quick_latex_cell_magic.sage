@@ -34,30 +34,21 @@ def quick_latex(line, cell):
     except BaseException:
         line_locals = globals()
     s = cell
+    t = Standalone(s, use_sage_preamble = True)
+    raw_path_to_tex = t.tex(f + ".tex")
     if full:
-        png(
-            rf"""
-\documentclass{{{doc_class}}}
-            """ + latex.extra_preamble()
-                + "\n"
-                + s,
-            f + ".png",
-            engine = "pdflatex",
-            density = 430
-        );
-        display(html( f" <img src='{f}.png'> " ))
-    else:
-        t = Standalone(s, use_sage_preamble = True)
-        raw_path_to_tex = t.tex(f + ".tex")
+        Path(raw_path_to_tex).write_text(
+            Path(raw_path_to_tex).read_text().replace(r"\documentclass{standalone}", rf"\documentclass{{{doc_class}}}")
+        )
 
-        !pdflatex -draftmode -interaction=batchmode {f}.tex
-        try:
-            sage_file = Path(f"{f}.sagetex.sage")
-            cmd = preparse_file(sage_file.read_text(), line_locals)
-            exec(cmd)
-        except BaseException:
-            print("file \'%s.sagetex.sage\' not found or failed to run."%f)
-        !pdflatex -interaction=batchmode {f}.tex
-        !pdf2svg {f}.pdf {f}.svg 1
+    !pdflatex -draftmode -interaction=batchmode {f}.tex
+    try:
+        sage_file = Path(f"{f}.sagetex.sage")
+        cmd = preparse_file(sage_file.read_text(), line_locals)
+        exec(cmd)
+    except BaseException:
+        print("file \'%s.sagetex.sage\' not found or failed to run."%f)
+    !pdflatex -interaction=batchmode {f}.tex
+    !pdf2svg {f}.pdf {f}.svg 1
 
     display(html(f" <h2> {f}.tex </h2> <img src='cell://{f}.svg' style='display:block'> "))
