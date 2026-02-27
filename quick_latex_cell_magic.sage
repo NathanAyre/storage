@@ -33,12 +33,13 @@ def quick_latex(line, cell):
         line_locals = dict(line[2])
     except BaseException:
         line_locals = globals()
+    print(full, line[0], line[1])
     s = cell
     t = Standalone(s, use_sage_preamble = True)
     raw_path_to_tex = t.tex(f + ".tex")
     if full:
-        Path(raw_path_to_tex).write_text(
-            Path(raw_path_to_tex).read_text().replace(r"\documentclass{standalone}", rf"\documentclass{{{doc_class}}}")
+        Path(f + ".tex").write_text(
+            Path(f + ".tex").read_text().replace(r"\documentclass{standalone}", rf"\documentclass{{{doc_class}}}")
         )
 
     !pdflatex -draftmode -interaction=batchmode {f}.tex
