@@ -35,7 +35,7 @@ def quick_latex(line, cell):
         line_locals = dict(line[2])
     except BaseException:
         line_locals = globals()
-    print(full, "line: {}".format(line))
+    # print(full, "line: {}".format(line))
     s = cell
     t = Standalone(s, use_sage_preamble = True)
     raw_path_to_tex = t.tex(f + ".tex")
