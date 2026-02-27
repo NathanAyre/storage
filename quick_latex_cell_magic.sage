@@ -23,8 +23,11 @@ def quick_latex(line, cell):
     line = line.split()
     f = line[0]
     try:
-        if line[1].lower() != "standalone": full = True
-        doc_class = full[1]
+        if line[1].lower() != "standalone":
+            full = True
+        else:
+            full = False
+        doc_class = line[1]
     except BaseException:
         full = False
         # no need to set doc_class
@@ -51,4 +54,5 @@ def quick_latex(line, cell):
     !pdflatex -interaction=batchmode {f}.tex
     !pdf2svg {f}.pdf {f}.svg 1
 
-    display(html(f" <h2> {f}.tex </h2> <img src='cell://{f}.svg' style='display:block'> "))
+    display(html(f" <h2> {f}.tex </h2> <img src='cell://{f}.svg' style='display:block; margin: 0'> "))
+    return line, cell
