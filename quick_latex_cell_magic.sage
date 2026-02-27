@@ -13,8 +13,8 @@ cd ~/texmf/tex/latex/luatex85-1.0
 latex luatex85.ins > /dev/null 2>&1
 """);
 
-latex.add_to_preamble( get_remote_file("https://raw.githubusercontent.com/NathanAyre/storage/refs/heads/main/preamble.tex").read_text() )
-latex.add_to_preamble(r"\pagenumbering{gobble}")
+latex.add_to_preamble( get_remote_file("https://raw.githubusercontent.com/NathanAyre/storage/refs/heads/main/preamble.tex").read_text() + "\n" + "\\pagenumbering{gobble}" )
+
 @register_cell_magic
 def quick_latex(line, cell):
     """
@@ -44,14 +44,14 @@ def quick_latex(line, cell):
             Path(f + ".tex").read_text().replace(r"\documentclass{standalone}", rf"\documentclass{{{doc_class}}}")
         )
 
-    !pdflatex -draftmode -interaction=batchmode {f}.tex
+    !pdflatex -shell-escape -draftmode -interaction=batchmode {f}.tex
     try:
         sage_file = Path(f"{f}.sagetex.sage")
         cmd = preparse_file(sage_file.read_text(), line_locals)
         exec(cmd)
     except BaseException:
         print("file \'%s.sagetex.sage\' not found or failed to run."%f)
-    !pdflatex -interaction=batchmode {f}.tex
+    !pdflatex -shell-escape -interaction=batchmode {f}.tex
     !pdf2svg {f}.pdf {f}.svg 1
 
     display(html(f" <h2> {f}.tex </h2> <img src='cell://{f}.svg' style='display:block; margin: 0'> "))
