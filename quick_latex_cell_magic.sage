@@ -13,7 +13,7 @@ cd ~/texmf/tex/latex/luatex85-1.0
 latex luatex85.ins
 """);
 
-latex.add_to_preamble( get_remote_file("blah").read_text() )
+latex.add_to_preamble( get_remote_file("https://raw.githubusercontent.com/NathanAyre/storage/refs/heads/main/preamble.tex").read_text() )
 
 @register_cell_magic
 def quick_latex(line, cell):
