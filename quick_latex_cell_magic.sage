@@ -23,8 +23,7 @@ def quick_latex(line, cell):
     line = line.split()
     f = line[0]
     try:
-        full = True if line[1].lower() != "standalone" \
-                    else False;
+        if line[1].lower() != "standalone": full = True
         doc_class = full[1]
     except BaseException:
         full = False
@@ -33,7 +32,7 @@ def quick_latex(line, cell):
         line_locals = dict(line[2])
     except BaseException:
         line_locals = globals()
-    print(full, line[0], line[1])
+    print(full, "line: {}".format(line))
     s = cell
     t = Standalone(s, use_sage_preamble = True)
     raw_path_to_tex = t.tex(f + ".tex")
