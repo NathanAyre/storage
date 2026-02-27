@@ -55,4 +55,3 @@ def quick_latex(line, cell):
     !pdf2svg {f}.pdf {f}.svg 1
 
     display(html(f" <h2> {f}.tex </h2> <img src='cell://{f}.svg' style='display:block; margin: 0'> "))
-    return line, cell
