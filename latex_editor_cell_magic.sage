@@ -464,4 +464,3 @@ def latex_editor(line,
         display( html(f"<div style='height:27.5em; width:80%; overflow:overlay;'> {images} </div>") )
     except BaseException:
         display( html(f"<h2>no SVG output for {filename}.tex</h2>") )
-    return line, cell
