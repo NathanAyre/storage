@@ -26,7 +26,7 @@ def latex_editor(line,
                    
                     \end{document}"""
                 ):
-    display(html("<h3>STARTING!</h3>"))
+    display(html("<div>STARTING!</div>"))
     __tmp__ = !rm *.svg
     __tmp__ = !rm *.pygtex
     filename = line
@@ -428,13 +428,13 @@ def latex_editor(line,
         #try:
         #    load(f'{filename}.sagetex.sage', verbose=False)
         #except:
-        #    display(html(f'<h2>no sage file found (finding {filename}.sagetex.sage)</h2>'))
+        #    display(html(f'<div style="color:red">no sage file found (finding {filename}.sagetex.sage)</div>'))
         !htlatex {filename}.tex "xhtml,pic-m,svg,png" "" "" "-interaction=batchmode -shell-escape"
         if Path(f"{filename}.html").exists() == False:
-            display(html(f"<h3>manual tex4ht > t4ht on <code>{filename}</code></h3>"))
+            display(html(f"<div>manual tex4ht > t4ht on <code>{filename}</code></div>"))
             _ = !tex4ht {filename}
             _ = !t4ht {filename}
-        display(html.iframe(f" cell://{filename}.html "))
+        display(html(f" <iframe src='cell://{filename}.html' style='overflow:overlay; width:100%;'></iframe> "))
         return
         
     # latex = "dvilualatex --shell-escape --interaction=batchmode" if ("%!tex lualatex" in cell) else "pdflatex -output-format=dvi -shell-escape -interaction=batchmode"
@@ -447,7 +447,7 @@ def latex_editor(line,
     #try:
     #    load(f'{filename}.sagetex.sage', verbose=False)
     #except:
-    #    display(html(f'<h2>no sage file found (finding {filename}.sagetex.sage)</h2>'))
+    #    display(html(f'<div style="color:red">no sage file found (finding {filename}.sagetex.sage)</div>'))
 
     # asyncio.get_event_loop().run_until_complete(coro)
    
