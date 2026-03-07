@@ -1,4 +1,3 @@
-
 #!/home/sc_serv/sage/local/var/lib/sage/venv-python3.12.5/bin/python3
 import hashlib
 import sys
@@ -41,6 +40,7 @@ def run(src):
     if not uses_sagetex:
         print(src + ".tex doesn't seem to use SageTeX, exiting.", file=sys.stderr)
         # sys.exit(1)
+        return;
 
     # if something goes wrong, assume we need to run Sage
     run_sage = True
@@ -56,6 +56,7 @@ def run(src):
         print('{0}.sagetex.sage not found, I think you need to typeset {0}.tex f \
 irst.'.format(src), file=sys.stderr)
         # sys.exit(1)
+        return;
 
     try:
         with open(src + '.sagetex.sout', 'r') as outf:
