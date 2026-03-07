@@ -429,8 +429,9 @@ def latex_editor(line,
             display(html(f'<h2>no sage file found (finding {filename}.sagetex.sage)</h2>'))
         !htlatex {filename}.tex "xhtml,pic-m,svg,png" "" "" "-interaction=batchmode -shell-escape"
         if Path(f"{filename}.html").exists() == False:
-            !tex4ht {filename}
-            !t4ht {filename}
+            display(html(f"<h3>manual tex4ht > t4ht on <code>{filename}</code></h3>"))
+            _ = !tex4ht {filename}
+            _ = !t4ht {filename}
         display(html.iframe(f" cell://{filename}.html "))
         return
         
