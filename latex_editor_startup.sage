@@ -94,7 +94,7 @@ def process_url(url):
         # ls --all texmf > /dev/null 2>&1     # list the contents of texmf before unzipping
         cd texmf/tex/latex > /dev/null 2>&1
         """%(path)
-        + (f"unzip {temp_name} -o > /dev/null 2>&1" if ext == ".zip" else f"mv {temp_name}{ext} {real_name} > /dev/null 2>&1")
+        + (f"unzip -o {temp_name} > /dev/null 2>&1" if ext == ".zip" else f"mv {temp_name}{ext} {real_name} > /dev/null 2>&1")
         + """
         cd # > /dev/null 2>&1                 # revert working directory: /home/sc_work/texmf -> /home/sc_work
         # ls --all texmf > /dev/null 2>&1   # list the contents of texmf after unzipping
@@ -119,7 +119,7 @@ try:
         {command} {name}               > /dev/null 2>&1
         '''.format(command = c, location = l, name = n) for [c, l, n] in [
             # ["latex", "piton-4.11", "piton.ins"],
-            # [r"""printf "3\ny" | python3""", "pythontex-0.18/pythontex", "pythontex_install.py"] if Path("~/texmf/scripts/pythontex/pythontex.py").exists() == False else None
+            [r"""printf "3\ny" | python3""", "pythontex-0.18/pythontex", "pythontex_install.py"] if Path("~/texmf/scripts/pythontex/pythontex.py").exists() == False else None
         ]
     ]
 except BaseException:
