@@ -117,7 +117,9 @@ def silly(t = input_box(starting_string, type=str, height=10)):
    
     files = !find . -type d -name "folder" -prune -o ! -name "*.svg" -type f ! -name "*.html" -type f -print
     for f in files:
-        !cp -r {f} ./folder/{"/".join(Path(f).parts[:-1])}
+        sub_folders = "/".join(Path(f).parts[:-1])
+        if sub_folders != "": _ = !mkdir -p ./folder/{sub_folders}
+        !cp -r {f} ./folder/{sub_folders}
    
     import shutil
     import base64
