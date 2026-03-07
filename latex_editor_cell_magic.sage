@@ -422,7 +422,7 @@ def latex_editor(line,
     latex2 = latex.replace("pdf", "dvi")
     latex = "" # cus i dont want pdf anymore.
     if "%!tex make4ht" in cell:
-        !htlatex {filename}.tex "xhtml,pic-m,svg,png" "" " -p" "-interaction=batchmode -shell-escape"
+        !htlatex {filename}.tex "xhtml,pic-m,svg,png" "" "" "-interaction=batchmode -shell-escape"
         try:
             load(f'{filename}.sagetex.sage', verbose=False)
         except:
