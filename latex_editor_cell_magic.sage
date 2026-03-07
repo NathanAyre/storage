@@ -424,7 +424,7 @@ def latex_editor(line,
     latex = "" # cus i dont want pdf anymore.
     if "%!tex make4ht" in cell:
         !htlatex {filename}.tex "xhtml,pic-m,svg,png" "" "-p" "-interaction=batchmode -shell-escape"
-        run(f"{filename}.sagetex.sage")
+        run(f"./{filename}.sagetex.sage")
         #try:
         #    load(f'{filename}.sagetex.sage', verbose=False)
         #except:
@@ -443,7 +443,7 @@ def latex_editor(line,
         "!{latex2} {document}.tex > /dev/null 2>&1".format(document = filename, latex2 = latex2)
     );
 
-    run(f"{filename}.sagetex.sage")
+    run(f"./{filename}.sagetex.sage")
     #try:
     #    load(f'{filename}.sagetex.sage', verbose=False)
     #except:
