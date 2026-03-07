@@ -5,7 +5,8 @@ from IPython import get_ipython as get_ipy
 from urllib.parse import urlparse
 from textwrap import dedent
 from sage.repl.ipython_extension import SageCustomizations
-load("https://github.com/NathanAyre/storage/blob/main/sagetex-run.py", verbose = False)
+sagetex_run = get_remote_file("https://raw.githubusercontent.com/NathanAyre/storage/refs/heads/main/sagetex-run.py", verbose = False)
+exec(sagetex_run.read_text())
 import asyncio
 # import nest_asyncio
 # nest_asyncio.apply()
