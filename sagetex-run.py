@@ -40,7 +40,7 @@ def run(src):
 
     if not uses_sagetex:
         print(src + ".tex doesn't seem to use SageTeX, exiting.", file=sys.stderr)
-        sys.exit(1)
+        # sys.exit(1)
 
     # if something goes wrong, assume we need to run Sage
     run_sage = True
@@ -55,7 +55,7 @@ def run(src):
     except IOError:
         print('{0}.sagetex.sage not found, I think you need to typeset {0}.tex f \
 irst.'.format(src), file=sys.stderr)
-        sys.exit(1)
+        # sys.exit(1)
 
     try:
         with open(src + '.sagetex.sout', 'r') as outf:
