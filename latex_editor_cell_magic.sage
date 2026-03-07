@@ -5,7 +5,7 @@ from IPython import get_ipython as get_ipy
 from urllib.parse import urlparse
 from textwrap import dedent
 from sage.repl.ipython_extension import SageCustomizations
-
+load("https://github.com/NathanAyre/storage/blob/main/sagetex-run.py", verbose = False)
 import asyncio
 # import nest_asyncio
 # nest_asyncio.apply()
@@ -422,11 +422,12 @@ def latex_editor(line,
     latex2 = latex.replace("pdf", "dvi")
     latex = "" # cus i dont want pdf anymore.
     if "%!tex make4ht" in cell:
-        !htlatex {filename}.tex "xhtml,pic-m,svg,png" "" "" "-interaction=batchmode -shell-escape"
-        try:
-            load(f'{filename}.sagetex.sage', verbose=False)
-        except:
-            display(html(f'<h2>no sage file found (finding {filename}.sagetex.sage)</h2>'))
+        !htlatex {filename}.tex "xhtml,pic-m,svg,png" "" "-p" "-interaction=batchmode -shell-escape"
+        run(f"{filename}.sagetex.sage")
+        #try:
+        #    load(f'{filename}.sagetex.sage', verbose=False)
+        #except:
+        #    display(html(f'<h2>no sage file found (finding {filename}.sagetex.sage)</h2>'))
         !htlatex {filename}.tex "xhtml,pic-m,svg,png" "" "" "-interaction=batchmode -shell-escape"
         if Path(f"{filename}.html").exists() == False:
             display(html(f"<h3>manual tex4ht > t4ht on <code>{filename}</code></h3>"))
@@ -440,11 +441,12 @@ def latex_editor(line,
     get_ipy().run_cell(
         "!{latex2} {document}.tex > /dev/null 2>&1".format(document = filename, latex2 = latex2)
     );
-   
-    try:
-        load(f'{filename}.sagetex.sage', verbose=False)
-    except:
-        display(html(f'<h2>no sage file found (finding {filename}.sagetex.sage)</h2>'))
+
+    run(f"{filename}.sagetex.sage")
+    #try:
+    #    load(f'{filename}.sagetex.sage', verbose=False)
+    #except:
+    #    display(html(f'<h2>no sage file found (finding {filename}.sagetex.sage)</h2>'))
 
     # asyncio.get_event_loop().run_until_complete(coro)
    
