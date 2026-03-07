@@ -117,7 +117,7 @@ def silly(t = input_box(starting_string, type=str, height=10)):
    
     files = !find . -type d -name "folder" -prune -o ! -name "*.svg" -type f -print
     for f in files:
-        !cp -r {f} ./folder
+        !cp -r {f} ./folder/{"/".join(Path(f).parts[:-1])}
    
     import shutil
     import base64
