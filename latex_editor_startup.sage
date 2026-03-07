@@ -75,7 +75,7 @@ def process_url(url):
         temp_name, ext = os.path.splitext(os.path.basename(path))
         real_name = Path(urlparse(url).path).name
         p = Path("/home/sc_work/texmf/tex/latex/" + real_name)
-        # print(p, p.exists())
+        print(p, p.exists())
         if p.exists(): return;
     else:
         path = get_remote_file(url[0], verbose = False)
@@ -83,7 +83,7 @@ def process_url(url):
         real_name = url[1]
         p = Path("/home/sc_work/texmf/tex/latex/" + real_name)
         if p.exists(): return;
-    # display(temp_name, real_name, ext)
+    display(temp_name, real_name, ext)
 
     get_ipy().run_cell(
         dedent("""
@@ -119,7 +119,7 @@ try:
         {command} {name}               > /dev/null 2>&1
         '''.format(command = c, location = l, name = n) for [c, l, n] in [
             # ["latex", "piton-4.11", "piton.ins"],
-            # [r"""printf "3\ny" | python3""", "pythontex-0.18/pythontex", "pythontex_install.py"] if Path("~/texmf/scripts/pythontex/pythontex.py").exists() == False else None
+            [r"""printf "3\ny" | python3""", "pythontex-0.18/pythontex", "pythontex_install.py"] if Path("~/texmf/scripts/pythontex/pythontex.py").exists() == False else None
         ]
     ]
 except BaseException:
