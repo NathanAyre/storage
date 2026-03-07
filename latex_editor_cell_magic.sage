@@ -421,6 +421,19 @@ def latex_editor(line,
     first_time = "-lualatex='lualatex -draftmode %O %S'" if ("%!tex lualatex" in cell) else "-pdflatex='pdflatex -draftmode %O %S'"
     latex2 = latex.replace("pdf", "dvi")
     latex = "" # cus i dont want pdf anymore.
+    if "%!tex make4ht" in cell:
+        !htlatex {filename}.tex "xhtml,pic-m,svg,png" "" " -p" "-interaction=batchmode -shell-escape"
+        try:
+            load(f'{filename}.sagetex.sage', verbose=False)
+        except:
+            display(html(f'<h2>no sage file found (finding {filename}.sagetex.sage)</h2>'))
+        !htlatex {filename}.tex "xhtml,pic-m,svg,png" "" "" "-interaction=batchmode -shell-escape"
+        if Path(f"{filename}.html").exists() == False:
+            !tex4ht {filename}
+            !t4ht {filename}
+        display(html.iframe(f" cell://{filename}.html "))
+        return
+        
     # latex = "dvilualatex --shell-escape --interaction=batchmode" if ("%!tex lualatex" in cell) else "pdflatex -output-format=dvi -shell-escape -interaction=batchmode"
     # latex2 = ""
     get_ipy().run_cell(
