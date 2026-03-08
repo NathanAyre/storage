@@ -75,7 +75,7 @@ def process_url(url):
         temp_name, ext = os.path.splitext(os.path.basename(path))
         real_name = Path(urlparse(url).path).name
         p = Path("/home/sc_work/texmf/tex/latex/" + real_name)
-        print(p, p.exists())
+        # print(p, p.exists())
         if p.exists(): return;
     else:
         path = get_remote_file(url[0], verbose = False)
