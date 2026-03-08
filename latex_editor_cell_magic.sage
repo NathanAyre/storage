@@ -423,18 +423,20 @@ def latex_editor(line,
     latex2 = latex.replace("pdf", "dvi")
     latex = "" # cus i dont want pdf anymore.
     if "%!tex make4ht" in cell:
-        _ = !htlatex {filename}.tex "xhtml,pic-m,svg,png" "" "-p" "-interaction=batchmode -shell-escape"
+        _ = !htlatex {filename}.tex "xhtml,pic-m,svg,png" "" "-p" "-interaction=nonstopmode -shell-escape"
         run(f"./{filename}.sagetex.sage")
         #try:
         #    load(f'{filename}.sagetex.sage', verbose=False)
         #except:
         #    display(html(f'<div style="color:red">no sage file found (finding {filename}.sagetex.sage)</div>'))
-        _ = !htlatex {filename}.tex "xhtml,pic-m,svg,png" "" "" "-interaction=batchmode -shell-escape"
+        _ = !htlatex {filename}.tex "xhtml,pic-m,svg,png" "" "" "-interaction=nonstopmode -shell-escape"
         if Path(f"{filename}.html").exists() == False:
-            display(html(f"<div>manual tex4ht > t4ht on <code>{filename}</code></div>"))
-            _ = !htlatex {filename}.tex "xhtml,pic-m,svg,png" "" "" "-interaction=batchmode -shell-escape"
-            # _ = !tex4ht {filename}
-            # _ = !t4ht {filename}
+            display(html(f"<div>another htlatex on <code>{filename}</code></div>"))
+            _ = !htlatex {filename}.tex "xhtml,pic-m,svg,png" "" "" "-interaction=nonstopmode -shell-escape"
+        if Path(f"{filename}.html").exists() == False:
+            display(html(f"<div>manual tex4ht &gt; t4ht on <code>{filename}</code></div>"))
+            _ = !tex4ht {filename} -P*
+            _ = !t4ht {filename}
         display(html(f" <iframe src='cell://{filename}.html' style='height:30em; overflow-x:scroll; overflow-y:scroll; width:80%;'></iframe> "))
         return
         
