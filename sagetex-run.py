@@ -8,6 +8,7 @@ import shutil
 import argparse
 from sage.repl.preparse import *
 from sage.repl.load import load
+from pathlib import Path
 """
 Given a filename f, examines f.sagetex.sage and f.sagetex.sout and
 runs Sage if necessary.
@@ -73,6 +74,6 @@ irst.'.format(src), file=sys.stderr)
 
     if run_sage:
         print('Need to run Sage on {0}.'.format(src))
-        load(preparse_named_file(src + '.sagetex.sage'), globals() | get_ipython().user_ns)
+        get_ipython.run_cell(preparse_file(Path(f"{src}.sagetex.sage").read_text(), get_ipython().user_ns | globals()))
     else:
         print('Not necessary to run Sage on {0}.'.format(src))
