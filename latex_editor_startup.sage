@@ -83,7 +83,7 @@ def process_url(url):
         real_name = url[1]
         p = Path("/home/sc_work/texmf/tex/latex/" + real_name)
         if p.exists(): return;
-    display(temp_name, real_name, ext)
+    # display(temp_name, real_name, ext)
 
     get_ipy().run_cell(
         dedent("""
