@@ -434,7 +434,7 @@ def latex_editor(line,
             display(html(f"<div>manual tex4ht > t4ht on <code>{filename}</code></div>"))
             _ = !tex4ht {filename}
             _ = !t4ht {filename}
-        display(html(f" <iframe src='cell://{filename}.html' style='overflow:overlay; width:100%;'></iframe> "))
+        display(html(f" <iframe src='cell://{filename}.html' style='overflow-x:scroll; overflow-y:scroll; width:80%;'></iframe> "))
         return
         
     # latex = "dvilualatex --shell-escape --interaction=batchmode" if ("%!tex lualatex" in cell) else "pdflatex -output-format=dvi -shell-escape -interaction=batchmode"
