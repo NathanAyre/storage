@@ -73,6 +73,6 @@ irst.'.format(src), file=sys.stderr)
 
     if run_sage:
         print('Need to run Sage on {0}.'.format(src))
-        load(preparse_file(src + '.sagetex.sage'), globals() | get_ipython().user_ns)
+        load(preparse_named_file(src + '.sagetex.sage'), globals() | get_ipython().user_ns)
     else:
         print('Not necessary to run Sage on {0}.'.format(src))
