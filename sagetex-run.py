@@ -7,7 +7,7 @@ import subprocess
 import shutil
 import argparse
 from sage.repl.preparse import *
-from sage.repl.load import load
+# from sage.repl.load import load
 from pathlib import Path
 """
 Given a filename f, examines f.sagetex.sage and f.sagetex.sout and
