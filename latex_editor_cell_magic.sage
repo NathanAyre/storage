@@ -432,8 +432,9 @@ def latex_editor(line,
         _ = !htlatex {filename}.tex "xhtml,pic-m,svg,png" "" "" "-interaction=batchmode -shell-escape"
         if Path(f"{filename}.html").exists() == False:
             display(html(f"<div>manual tex4ht > t4ht on <code>{filename}</code></div>"))
-            _ = !tex4ht {filename}
-            _ = !t4ht {filename}
+            _ = !htlatex {filename}.tex "xhtml,pic-m,svg,png" "" "" "-interaction=batchmode -shell-escape"
+            # _ = !tex4ht {filename}
+            # _ = !t4ht {filename}
         display(html(f" <iframe src='cell://{filename}.html' style='height:30em; overflow-x:scroll; overflow-y:scroll; width:80%;'></iframe> "))
         return
         
