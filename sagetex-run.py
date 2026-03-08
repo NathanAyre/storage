@@ -74,6 +74,6 @@ irst.'.format(src), file=sys.stderr)
 
     if run_sage:
         print('Need to run Sage on {0}.'.format(src))
-        get_ipython.run_cell(preparse_file(Path(f"{src}.sagetex.sage").read_text(), get_ipython().user_ns | globals()))
+        load(f"{src}.sagetex.sage")
     else:
         print('Not necessary to run Sage on {0}.'.format(src))
