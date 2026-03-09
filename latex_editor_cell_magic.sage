@@ -6,6 +6,7 @@ from urllib.parse import urlparse
 from textwrap import dedent
 from sage.repl.ipython_extension import SageCustomizations
 sagetex_run = get_remote_file("https://raw.githubusercontent.com/NathanAyre/storage/refs/heads/main/sagetex-run.py", verbose = False)
+htlualatex = get_remote_file("https://raw.githubusercontent.com/NathanAyre/storage/refs/heads/main/htlualatex.sh", verbose = False)
 load(sagetex_run)
 import asyncio
 # import nest_asyncio
@@ -423,20 +424,23 @@ def latex_editor(line,
     latex2 = latex.replace("pdf", "dvi")
     latex = "" # cus i dont want pdf anymore.
     if "%!tex make4ht" in cell:
-        _ = !htlatex {filename}.tex "xhtml,pic-m,svg,png" "" "-p" "-interaction=nonstopmode -shell-escape"
-        run(f"./{filename}.sagetex.sage")
-        #try:
-        #    load(f'{filename}.sagetex.sage', verbose=False)
-        #except:
-        #    display(html(f'<div style="color:red">no sage file found (finding {filename}.sagetex.sage)</div>'))
-        _ = !htlatex {filename}.tex "xhtml,pic-m,svg,png" "" "" "-interaction=nonstopmode -shell-escape"
-        if Path(f"{filename}.html").exists() == False:
-            display(html(f"<div>another htlatex on <code>{filename}</code></div>"))
+        if "%!tex lualatex" in cell:
+            !bash {htlualatex} {filename}
+        else:
+            _ = !htlatex {filename}.tex "xhtml,pic-m,svg,png" "" "-p" "-interaction=nonstopmode -shell-escape"
+            run(f"./{filename}.sagetex.sage")
+            #try:
+            #    load(f'{filename}.sagetex.sage', verbose=False)
+            #except:
+            #    display(html(f'<div style="color:red">no sage file found (finding {filename}.sagetex.sage)</div>'))
             _ = !htlatex {filename}.tex "xhtml,pic-m,svg,png" "" "" "-interaction=nonstopmode -shell-escape"
-        if Path(f"{filename}.html").exists() == False:
-            display(html(f"<div>manual tex4ht &gt; t4ht on <code>{filename}</code></div>"))
-            _ = !tex4ht {filename} -P*
-            _ = !t4ht {filename}
+            # if Path(f"{filename}.html").exists() == False:
+                # display(html(f"<div>another htlatex on <code>{filename}</code></div>"))
+                # _ = !htlatex {filename}.tex "xhtml,pic-m,svg,png" "" "" "-interaction=nonstopmode -shell-escape"
+            if Path(f"{filename}.html").exists() == False:
+                display(html(f"<div>manual tex4ht &gt; t4ht on <code>{filename}</code></div>"))
+                _ = !tex4ht {filename} -P*
+                _ = !t4ht {filename}
         display(html(f" <iframe src='cell://{filename}.html' style='height:30em; overflow-x:scroll; overflow-y:scroll; width:80%;'></iframe> "))
         return
         
