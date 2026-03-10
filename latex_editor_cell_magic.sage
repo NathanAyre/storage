@@ -425,9 +425,10 @@ def latex_editor(line,
     latex = "" # cus i dont want pdf anymore.
     if "%!tex make4ht" in cell:
         if "%!tex lualatex" in cell:
-            !bash {htlualatex} {filename}
+            _ = !bash {htlualatex} {filename}
         else:
-            _ = !htlatex {filename}.tex "xhtml,pic-m,svg,png" "" "-p" "-interaction=nonstopmode -shell-escape"
+            # _ = !htlatex {filename}.tex "xhtml,pic-m,svg,png" "" "-p" "-interaction=nonstopmode -shell-escape"
+            _ = !pdflatex -draftmode -interaction=nonstopmode -shell-escape {filename}.tex
             run(f"./{filename}.sagetex.sage")
             #try:
             #    load(f'{filename}.sagetex.sage', verbose=False)
