@@ -7,7 +7,9 @@ from textwrap import dedent
 from sage.repl.ipython_extension import SageCustomizations
 sagetex_run = get_remote_file("https://raw.githubusercontent.com/NathanAyre/storage/refs/heads/main/sagetex-run.py", verbose = False)
 htlualatex = get_remote_file("https://raw.githubusercontent.com/NathanAyre/storage/refs/heads/main/htlualatex.sh", verbose = False)
+pdfjs = get_remote_file("https://raw.githubusercontent.com/NathanAyre/storage/refs/heads/main/pdfjs_startup.sage", verbose = False)
 load(sagetex_run)
+await get_ipython.run_cell_async(preparse(pdfjs.read_text()), silent = True)
 import asyncio
 # import nest_asyncio
 # nest_asyncio.apply()
@@ -448,7 +450,7 @@ def latex_editor(line,
     # latex = "dvilualatex --shell-escape --interaction=batchmode" if ("%!tex lualatex" in cell) else "pdflatex -output-format=dvi -shell-escape -interaction=batchmode"
     # latex2 = ""
     get_ipy().run_cell(
-        "!{latex2} {document}.tex > /dev/null 2>&1".format(document = filename, latex2 = latex2)
+        "!{latex} {document}.tex > /dev/null 2>&1".format(document = filename, latex = latex)
     );
 
     run(f"./{filename}.sagetex.sage")
@@ -464,15 +466,16 @@ def latex_editor(line,
         dedent("""
         %%script bash
         {latex} {document}.tex > /dev/null 2>&1
-        {latex2} {document}.tex > /dev/null 2>&1
+        # {latex2} {document}.tex > /dev/null 2>&1
 
         # dvipng -D 3000 -T tight {document}.dvi > /dev/null 2>&1
-        dvisvgm --page=1- --output="%f%p-%P" --font-format=woff --exact-bbox {document}.dvi > /dev/null 2>&1
+        # dvisvgm --page=1- --output="%f%p-%P" --font-format=woff --exact-bbox {document}.dvi > /dev/null 2>&1
     """.format(document = filename, latex = latex, latex2 = latex2))
     )
 
     import time
-    # display(html.iframe(f"cell://{filename}.pdf?{time.time()}"))
+    display(html.iframe(f"cell://web/viewer.html?file=../{filename}.pdf"))
+    return
 
     all_files = os.listdir('.')
     try:
@@ -488,4 +491,4 @@ def latex_editor(line,
             # display( html(f"<img src='cell://{filename}1.png' style='min-width:500px; max-width:65%;'>") )
         display( html(f"<div style='height:27.5em; width:80%; overflow:overlay;'> {images} </div>") )
     except BaseException:
-        display( html(f"<h2>no SVG output for {filename}.tex</h2>") )
+        display( html(f"<h2>no SVG output for {filename}.tex</h2>"))
