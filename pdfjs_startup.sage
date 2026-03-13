@@ -18,21 +18,22 @@ Path("web/viewer.html").write_text(
 # new mjs handling
 mjs = Path("web/viewer.mjs")
 lines = mjs.read_text().splitlines()
-for i in range(len(lines)):
-    if "const DEFAULT_SCALE_VALUE" in lines[i]:
-        replacements = r'''
-        const DEFAULT_SCALE_VALUE = "auto";
+replacements = r'''
+const DEFAULT_SCALE_VALUE = "auto";
 const DEFAULT_SCALE = 1.0;
 const DEFAULT_SCALE_DELTA = 1.1;
 const MIN_SCALE = 0.1;
 const MAX_SCALE = 100.0;
 const UNKNOWN_SCALE = 0;
 const MAX_AUTO_SCALE = 10;
-        '''.strip().splitlines();
+'''.strip().splitlines();
+for i in range(len(lines)):
+    if "const DEFAULT_SCALE_VALUE" in lines[i]:
         for index in [0,..,6]:
             lines[index+i] = replacements[index]
-    elif "enableScripting = false" in lines[i]:
-        lines[i] = lines[i].replace("false", "true")
+        break
+    #elif "enableScripting = false" in lines[i]:
+        #lines[i] = lines[i].replace("false", "true")
 
 mjs.write_text(
     "\n".join(lines)
