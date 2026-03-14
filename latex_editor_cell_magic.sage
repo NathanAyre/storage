@@ -9,7 +9,7 @@ sagetex_run = get_remote_file("https://raw.githubusercontent.com/NathanAyre/stor
 htlualatex = get_remote_file("https://raw.githubusercontent.com/NathanAyre/storage/refs/heads/main/htlualatex.sh", verbose = False)
 pdfjs = get_remote_file("https://raw.githubusercontent.com/NathanAyre/storage/refs/heads/main/pdfjs_startup.sage", verbose = False)
 load(sagetex_run)
-await get_ipython.run_cell_async(preparse(pdfjs.read_text()), silent = True)
+await get_ipython().run_cell_async(preparse(pdfjs.read_text()), silent = True)
 import asyncio
 # import nest_asyncio
 # nest_asyncio.apply()
