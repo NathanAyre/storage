@@ -3,8 +3,9 @@ from pathlib import Path
 _ = !unzip {get_remote_file("https://github.com/mozilla/pdf.js/releases/download/v5.5.207/pdfjs-5.5.207-dist.zip", verbose = False)}
 css = get_remote_file("https://raw.githubusercontent.com/NathanAyre/storage/refs/heads/main/viewer.css", verbose = False)
 # mjs = get_remote_file("https://raw.githubusercontent.com/NathanAyre/storage/refs/heads/main/viewer.mjs", verbose = False)
-my_file = get_remote_file("https://raw.githubusercontent.com/NathanAyre/storage/refs/heads/main/my_file.js", verbose = False)
+# my_file = get_remote_file("https://raw.githubusercontent.com/NathanAyre/storage/refs/heads/main/my_file.js", verbose = False)
 
+r'''
 # new my_file handling
 Path("web/viewer.html").write_text(
     Path("web/viewer.html").read_text()
@@ -15,6 +16,7 @@ Path("web/viewer.html").write_text(
     </body>
     """)
 )
+'''
 # new mjs handling
 mjs = Path("web/viewer.mjs")
 lines = mjs.read_text().splitlines()
