@@ -115,7 +115,9 @@ def silly(t = input_box(starting_string, type=str, height=10)):
 
     %mkdir folder
 
-    files = !find . \( -name "folder" -o -name "web" -o -name "build" \) -prune -o ! -name "*.svg" ! -name "*.html" -type f -print
+    jobname = !ls *.log
+    jobname = jobname[0]
+    files = !find . \( -name "folder" -o -name "web" -o -name "build" \) -prune -o ! -name "*.svg" ! -name "*.html" ! -name "{jobname}.pdf" -type f -print
     # NOOOOOO files = !find . -type d -name "folder" -prune -o ! -name "*.svg" -type f ! -name "*.html" -type f -print
     for f in files:
         sub_folders = "/".join(Path(f).parts[:-1])
