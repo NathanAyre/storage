@@ -421,9 +421,9 @@ def latex_editor(line,
         )
 
     # now go back to the home directory and run `latex` as defined in the variable below
-    latex = "latexmk -pdf -pdflua -shell-escape -interaction=batchmode" if ("%!tex lualatex" in cell) else "latexmk -pdf -shell-escape -interaction=batchmode"
+    latex = "latexmk -pdflua -shell-escape -interaction=batchmode" if ("%!tex lualatex" in cell) else "latexmk -pdf -shell-escape -interaction=batchmode"
     first_time = "-lualatex='lualatex -draftmode %O %S'" if ("%!tex lualatex" in cell) else "-pdflatex='pdflatex -draftmode %O %S'"
-    latex2 = latex.replace("pdf", "dvi")
+    latex2 = latex.replace("pdflua", "dvilua -pdf-").replace("batchmode", "batchmode -dvi").replace("-pdf", "-pdf-")
 
     if "%!tex make4ht" in cell:
         if "%!tex lualatex" in cell:
