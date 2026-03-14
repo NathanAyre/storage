@@ -45,7 +45,7 @@ mjs.write_text(
 Path("web/viewer.css").write_text("")
 Path("web/viewer.html").write_text(
     Path("web/viewer.html").read_text().replace(
-        "</head>",
-        f"<style>{css.read_text()}</style> </head>"
+        '<link rel="stylesheet" href="viewer.css" />',
+        f"<style>{css.read_text()}</style>"
     )
 );
