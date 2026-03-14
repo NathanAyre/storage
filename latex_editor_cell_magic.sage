@@ -473,11 +473,12 @@ def latex_editor(line,
 
     import time
     pdf = f"{filename}-{time.time()}.pdf"
-    _ = !cp {filename}.pdf ./web/
-    _ = !mv web/{filename}.pdf web/{pdf}
+    _ = !rm {filename}-*.pdf
+    _ = !cp {filename}.pdf {pdf}
+    _ = !yes | cp web/viewer.html ./
     display(html(
         f"""
-<iframe src = "cell://web/viewer.html?file={pdf}" style = "height: 80vh; width: 100%;" sandbox = "allow-scripts allow-same-origin">
+<iframe src = "cell://viewer.html?file={pdf}" style = "height: 80vh; width: 100%;" sandbox = "allow-scripts allow-same-origin">
 </iframe>
 """
     ));
