@@ -462,12 +462,11 @@ def latex_editor(line,
     # sage and pythontex.py have been ran at the same time. now proceed with 2nd latex compilation
     get_ipy().run_cell(
         dedent("""
-        %%script bash
-        {latex} {document}.tex > /dev/null 2>&1
-        # {latex2} {document}.tex > /dev/null 2>&1
+        !{latex} {document}.tex > /dev/null 2>&1
+        # !{latex2} {document}.tex > /dev/null 2>&1
 
-        # dvipng -D 3000 -T tight {document}.dvi > /dev/null 2>&1
-        # dvisvgm --page=1- --output="%f%p-%P" --font-format=woff --exact-bbox {document}.dvi > /dev/null 2>&1
+        # !dvipng -D 3000 -T tight {document}.dvi > /dev/null 2>&1
+        # !dvisvgm --page=1- --output="%f%p-%P" --font-format=woff --exact-bbox {document}.dvi > /dev/null 2>&1
     """.format(document = filename, latex = latex, latex2 = latex2))
     )
 
