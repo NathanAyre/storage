@@ -32,6 +32,7 @@ def latex_editor(line,
     display(html("<div>STARTING!</div>"))
     __tmp__ = !rm *.svg
     __tmp__ = !rm *.pygtex
+    __tmp__ = !rm web/*.pdf
     filename = line
     preamble = r"""
   \documentclass{article}
@@ -471,9 +472,12 @@ def latex_editor(line,
     )
 
     import time
+    pdf = f"{filename}-{time.time()}.pdf"
+    _ = !cp {filename}.pdf ./web/
+    _ = !mv web/{filename}.pdf web/{pdf}
     display(html(
         f"""
-<iframe src = "cell://web/viewer.html?file=..%2F{filename}.pdf%3Fq%3D{time.time()}" style = "height: 80vh; width: 100%;" sandbox = "allow-scripts allow-same-origin">
+<iframe src = "cell://web/viewer.html?file={pdf}" style = "height: 80vh; width: 100%;" sandbox = "allow-scripts allow-same-origin">
 </iframe>
 """
     ));
