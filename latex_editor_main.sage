@@ -62,10 +62,10 @@ Also, did you know that $9!$ is equal to \sage{factorial(9)}? That's cool!!!! :D
 @interact
 def silly(t = input_box(starting_string, type=str, height=10)):
     !rm -rf folder
-    # !rm -rf build
-    # !rm -rf web
-    # pdfjs = get_remote_file("https://raw.githubusercontent.com/NathanAyre/storage/refs/heads/main/pdfjs_startup.sage", verbose = False)
-    # get_ipython().run_cell(preparse(pdfjs.read_text()), silent = True)
+    !rm -rf build
+    !rm -rf web
+    pdfjs = get_remote_file("https://raw.githubusercontent.com/NathanAyre/storage/refs/heads/main/pdfjs_startup.sage", verbose = False)
+    get_ipython().run_cell(preparse(pdfjs.read_text()), silent = True)
 
     Path("file.sage").write_text(t)
    
