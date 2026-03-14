@@ -117,6 +117,7 @@ def silly(t = input_box(starting_string, type=str, height=10)):
 
     jobname = !ls *.log
     jobname = jobname[0]
+    print(jobname)
     files = !find . \( -name "folder" -o -name "web" -o -name "build" \) -prune -o ! -name "*.svg" ! -name "*.html" ! -name "{jobname}.pdf" -type f -print
     # NOOOOOO files = !find . -type d -name "folder" -prune -o ! -name "*.svg" -type f ! -name "*.html" -type f -print
     for f in files:
