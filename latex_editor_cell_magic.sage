@@ -472,7 +472,16 @@ def latex_editor(line,
     )
 
     import time
-    display(html.iframe(f"cell://web/viewer.html?file=../{filename}.pdf"))
+    display(html(
+        f"""
+<iframe src = 'cell://web/viewer.html?file=../{filename}.pdf'
+        style = 'height: 80vh;
+                 width: 100%;
+                '
+>
+</iframe>
+"""
+    ));
     return
 
     all_files = os.listdir('.')
