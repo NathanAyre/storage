@@ -42,7 +42,7 @@ mjs.write_text(
 );
 
 # new css handling
-!rm web/viewer.css
+Path("web/viewer.css").write_text("")
 Path("web/viewer.html").write_text(
     Path("web/viewer.html").read_text().replace(
         "</head>",
