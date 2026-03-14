@@ -474,7 +474,7 @@ def latex_editor(line,
     import time
     display(html(
         f"""
-<iframe src = 'cell://web/viewer.html?file=../{filename}.pdf?{time.time()}'
+<iframe src = 'cell://web/viewer.html?file=../{filename}.pdf&id={time.time()}'
         style = 'height: 80vh;
                  width: 100%;
                 '
