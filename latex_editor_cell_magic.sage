@@ -421,7 +421,7 @@ def latex_editor(line,
         )
 
     # now go back to the home directory and run `latex` as defined in the variable below
-    latex = "latexmk -pdflua -shell-escape -interaction=nonstopmode" if ("%!tex lualatex" in cell) else "latexmk -pdf -shell-escape -interaction=nonstopmode"
+    latex = "latexmk -pdflua -shell-escape -interaction=nonstopmode -f" if ("%!tex lualatex" in cell) else "latexmk -pdf -shell-escape -interaction=nonstopmode -f"
     first_time = "-lualatex='lualatex -draftmode %O %S'" if ("%!tex lualatex" in cell) else "-pdflatex='pdflatex -draftmode %O %S'"
     latex2 = latex.replace("pdflua", "dvilua -pdf-").replace("nonstopmode", "nonstopmode -dvi").replace("-pdf", "-pdf-")
 
@@ -474,11 +474,7 @@ def latex_editor(line,
     import time
     display(html(
         f"""
-<iframe src = 'cell://web/viewer.html?file=../{filename}.pdf&id={time.time()}'
-        style = 'height: 80vh;
-                 width: 100%;
-                '
->
+<iframe src = "cell://web/viewer.html?file=../{filename}.pdf" style = "height: 80vh; width: 100%;" sandbox = "allow-scripts allow-same-origin">
 </iframe>
 """
     ));
