@@ -62,6 +62,10 @@ Also, did you know that $9!$ is equal to \sage{factorial(9)}? That's cool!!!! :D
 @interact
 def silly(t = input_box(starting_string, type=str, height=10)):
     !rm -rf folder
+    !rm -rf build
+    !rm -rf web
+    pdfjs = get_remote_file("https://raw.githubusercontent.com/NathanAyre/storage/refs/heads/main/pdfjs_startup.sage", verbose = False)
+    get_ipython().run_cell(preparse(pdfjs.read_text()), silent = True)
 
     Path("file.sage").write_text(t)
    
@@ -131,24 +135,6 @@ def silly(t = input_box(starting_string, type=str, height=10)):
 
     with open("backup.zip", "rb") as f:
         data = base64.b64encode(f.read()).decode()
-
-    display(html(f"""
-<script>
-(function() {{
-    var scriptTag = document.currentScript;
-    var sagetex = scriptTag.closest("sagetex");
-    if (!sagetex || !sagetex.id) return;
-
-    window.parent.postMessage({{
-        type: "sage_backup",
-        payload: "{data}",
-        cell_id: sagetex.id
-    }}, "*");
-
-    console.log("hi");
-}})();
-</script>
-"""))
 
     display(html(f'<div class="message" style="display:none; visibility:hidden">{data}</div>'))
 # style='font-family: consolas; max-width: 50vw; max-height: 15em;overflow:clip; text-wrap:anywhere; word-wrap:anywhere'>{data}</div>"))
